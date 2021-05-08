@@ -1,6 +1,5 @@
 package main;
 
-
 import view.Cliente;
 import java.io.IOException;
 
