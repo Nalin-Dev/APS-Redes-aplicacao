@@ -81,7 +81,6 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
     }
 
     @Override
@@ -99,7 +98,6 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
                 e1.printStackTrace();
             }
         }
-
     }
 
     @Override
@@ -112,7 +110,6 @@ public class Cliente extends JFrame implements ActionListener, KeyListener {
      * @throws IOException
      */
     public void conectar() throws IOException{
-
         socket = new Socket(txtIP.getText(),Integer.parseInt(txtPorta.getText()));
         ou = socket.getOutputStream();
         ouw = new OutputStreamWriter(ou);
