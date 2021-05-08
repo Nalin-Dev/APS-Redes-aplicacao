@@ -1,0 +1,11 @@
+
+
+
+# Excluindo arquivos .pdf
+
+**.pdf
+**/material
+**.sh
+**/.idea/
+**/out/
+
