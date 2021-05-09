@@ -1,27 +1,30 @@
 package server;
 
+import utils.InfoMensagem;
+
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Servidor extends Thread {
 
-    private static ArrayList<BufferedWriter> clientes = new ArrayList<>();
+    private static final ArrayList<BufferedWriter> clientes = new ArrayList<>();
     private String nome;
-    private Socket con;
-    private InputStream in;
-    private InputStreamReader inr;
+    private final Socket con;
     private BufferedReader bfr;
 
     /**
      * Método construtor
-     * @param com do tipo Socket
+     * @param con do tipo Socket
      */
     public Servidor(Socket con){
         this.con = con;
         try {
-            in  = con.getInputStream();
-            inr = new InputStreamReader(in);
+            InputStream in = con.getInputStream();
+            InputStreamReader inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,9 +51,13 @@ public class Servidor extends Thread {
                 System.out.println(msg);
             }
 
-        }catch (Exception e) {
-            e.printStackTrace();
-
+        }
+        catch (Exception e) {
+            if (e instanceof SocketException) {
+                Logger.getLogger(Servidor.class.getName()).log(Level.INFO, String.format("%s saiu da chamada!", nome));
+            } else {
+                Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, "Erro genérico", e);
+            }
         }
     }
 
@@ -60,14 +67,14 @@ public class Servidor extends Thread {
      * @param msg do tipo String
      * @throws IOException
      */
-    public void sendToAll(BufferedWriter bwSaida, String msg) throws  IOException
+    public void sendToAll(final BufferedWriter bwSaida, String msg) throws  IOException
     {
         BufferedWriter bwS;
 
         for(BufferedWriter bw : clientes){
-            bwS = (BufferedWriter)bw;
+            bwS = bw;
             if(!(bwSaida == bwS)){
-                bw.write(nome + " -> " + msg+"\r\n");
+                bw.write(new InfoMensagem(nome, msg).getMensgem());
                 bw.flush();
             }
         }
