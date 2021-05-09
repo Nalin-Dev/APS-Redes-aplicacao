@@ -30,7 +30,7 @@ public class Controller {
         cliente.setOuw(new OutputStreamWriter(cliente.getOu()));
         cliente.setBfw(new BufferedWriter(cliente.getOuw()));
         tela.getCaixaDeTexto().append("Você entrou na sala!\r\n");
-        cliente.getBfw().write(cliente.getNome() +"\r\n");
+        cliente.getBfw().write(cliente.getNomeID() + "\r\n");
         cliente.getBfw().flush();
     }
 
@@ -79,11 +79,15 @@ public class Controller {
                 mensagemRecebida = msg != null;
 
                 if (!"".equals(msg)) {
-                    final String nomeRemetente = msg.contains("enviou") ? msg.split(" ")[1] : "";
+
+                    final String nomeRemetente = msg.contains("#") ? msg.split("-")[0] : "";
+                    final String info = msg.contains("#") ? msg.split("-")[1] : "";
+                    final String nome = nomeRemetente.split("#")[0];
+
                     if (!"".equals(nomeRemetente)) {
                         if ("".equals(ultimaMensagem) || !ultimaMensagem.equals(nomeRemetente)) {
                             ultimaMensagem = nomeRemetente;
-                            tela.getCaixaDeTexto().append("\n" + msg + "\r\n");
+                            tela.getCaixaDeTexto().append(String.format("\n[ %s ] - %s\r\n", nome, info));
                         }
                     } else {
                         tela.getCaixaDeTexto().append(msg + "\r\n");

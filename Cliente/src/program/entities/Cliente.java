@@ -2,10 +2,13 @@ package program.entities;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Cliente  {
 
-    private String nome;
+    private final String nome;
+    private final String nomeID;
     private Socket socket;
     private OutputStream ou ;
     private Writer ouw;
@@ -13,6 +16,17 @@ public class Cliente  {
 
     public Cliente(final String nome) throws IOException {
         this.nome = nome;
+        nomeID = setNomeID(nome);
+    }
+
+    private String setNomeID(final String nome) {
+        final Date date = new Date();
+        final SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyHHmmss");
+        return nome + "#" + formatter.format(date);
+    }
+
+    public String getNomeID() {
+        return nomeID;
     }
 
     public String getNome() {
