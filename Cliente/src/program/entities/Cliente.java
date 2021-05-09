@@ -1,4 +1,4 @@
-package main;
+package program.entities;
 
 import java.io.*;
 import java.net.Socket;

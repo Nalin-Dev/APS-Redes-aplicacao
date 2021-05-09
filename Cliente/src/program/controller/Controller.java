@@ -1,7 +1,7 @@
 package program.controller;
 
 import program.utils.InfoMensagem;
-import main.Cliente;
+import program.entities.Cliente;
 import program.view.Tela;
 
 import java.io.*;
@@ -11,6 +11,8 @@ public class Controller {
 
     private final Cliente cliente;
     private final Tela tela;
+    private boolean mensagemRecebida = true;
+    private String ultimaMensagem = "";
 
     public Controller(Cliente cliente, Tela tela) {
         this.cliente = cliente;
@@ -27,6 +29,7 @@ public class Controller {
         cliente.setOu(socket.getOutputStream());
         cliente.setOuw(new OutputStreamWriter(cliente.getOu()));
         cliente.setBfw(new BufferedWriter(cliente.getOuw()));
+        tela.getCaixaDeTexto().append("Você entrou na sala!\r\n");
         cliente.getBfw().write(cliente.getNome() +"\r\n");
         cliente.getBfw().flush();
     }
@@ -41,9 +44,18 @@ public class Controller {
         if(msg.equals("Sair")){
             cliente.getBfw().write("Desconectado \r\n");
             tela.getCaixaDeTexto().append("Desconectado \r\n");
-        }else{
+
+        } else if (!"".equals(msg)) {
+
             cliente.getBfw().write(msg+"\r\n");
-            tela.getCaixaDeTexto().append(new InfoMensagem(cliente.getNome(), tela.getMensagem()).getMensgem());
+            ultimaMensagem = "";
+
+            if (!mensagemRecebida) {
+                tela.getCaixaDeTexto().append(tela.getMensagem() + "\r\n");
+            } else {
+                tela.getCaixaDeTexto().append(new InfoMensagem(tela.getMensagem()).getMensgem());
+                mensagemRecebida = false;
+            }
         }
         cliente.getBfw().flush();
         tela.limpaMensagem();
@@ -53,21 +65,36 @@ public class Controller {
      * Método usado para receber mensagem do servidor
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
-    public void escutar() throws IOException{
+    public void escutar() throws IOException {
         InputStream in = cliente.getSocket().getInputStream();
         InputStreamReader inr = new InputStreamReader(in);
         BufferedReader bfr = new BufferedReader(inr);
         String msg = "";
 
-        while(!"Sair".equalsIgnoreCase(msg))
+        while(!"Sair".equalsIgnoreCase(msg)) {
 
-            if(bfr.ready()){
+            if(bfr.ready()) {
                 msg = bfr.readLine();
-                if(msg.equals("Sair"))
+
+                mensagemRecebida = msg != null;
+
+                if (!"".equals(msg)) {
+                    final String nomeRemetente = msg.contains("enviou") ? msg.split(" ")[1] : "";
+                    if (!"".equals(nomeRemetente)) {
+                        if ("".equals(ultimaMensagem) || !ultimaMensagem.equals(nomeRemetente)) {
+                            ultimaMensagem = nomeRemetente;
+                            tela.getCaixaDeTexto().append("\n" + msg + "\r\n");
+                        }
+                    } else {
+                        tela.getCaixaDeTexto().append(msg + "\r\n");
+                    }
+                }
+
+                if(msg.equals("Sair")) {
                     tela.getCaixaDeTexto().append("Servidor caiu! \r\n");
-                else
-                    tela.getCaixaDeTexto().append(msg+"\r\n");
+                }
             }
+        }
     }
 
     /***

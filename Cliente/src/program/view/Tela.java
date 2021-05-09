@@ -6,7 +6,7 @@ package program.view;/*
  */
 
 
-import main.Cliente;
+import program.entities.Cliente;
 import program.controller.Controller;
 
 import javax.swing.*;
@@ -30,7 +30,6 @@ public class Tela extends JFrame {
     private final JTextField txtIP;
     private final JTextField txtPorta;
     private final JTextField txtNome;
-    private final String TEXTO_CAMPO_INICIAL = "Digite. . .";
     private final Controller controller;
 
 
@@ -92,7 +91,6 @@ public class Tela extends JFrame {
             }
         });
 
-        campoMensagem.setText(TEXTO_CAMPO_INICIAL);
         campoMensagem.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 campoMensagemFocusGained(evt);
@@ -138,9 +136,7 @@ public class Tela extends JFrame {
     }
 
     private void campoMensagemFocusGained(java.awt.event.FocusEvent evt) {
-        if (TEXTO_CAMPO_INICIAL.equals(campoMensagem.getText())) {
-            campoMensagem.setText("");
-        }
+        campoMensagem.setText("");
     }
 
     private void campoMensagemKeyPressed(java.awt.event.KeyEvent evt) {

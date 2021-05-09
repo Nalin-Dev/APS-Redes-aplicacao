@@ -6,15 +6,14 @@ import java.util.Date;
 public class InfoMensagem {
     private final String mensgem;
 
-    public InfoMensagem(String cliente, String mensgem) {
-        this.mensgem = criaInfoMensgem(cliente, mensgem);
+    public InfoMensagem(String mensgem) {
+        this.mensgem = criaInfoMensgem(mensgem);
     }
 
-    private String criaInfoMensgem(String cliente, String mensgem) {
+    private String criaInfoMensgem(String mensgem) {
         final Date date = new Date();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-        return String.format("%s enviado as %s horas: \n", cliente, formatter.format(date)) + mensgem + "\r\n";
+        final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        return String.format("\r\n[ Você ] - enviou as %s: \r\n", formatter.format(date)) + mensgem + "\r\n";
     }
 
     public String getMensgem() {
