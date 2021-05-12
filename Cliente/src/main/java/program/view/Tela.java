@@ -1,4 +1,4 @@
-package program.view;/*
+package main.java.program.view;/*
 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -6,8 +6,8 @@ package program.view;/*
  */
 
 
-import program.entities.Cliente;
-import program.controller.Controller;
+import main.java.program.controller.Controller;
+import main.java.program.entities.Cliente;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +37,7 @@ public class Tela extends JFrame {
         UIManager.put("OptionPane.minimumSize",new Dimension(250,200));
         final JLabel lblMessage = new JLabel("Verificar!");
         txtIP = new JTextField("127.0.0.1");
-        txtPorta = new JTextField("4200");
+        txtPorta = new JTextField("4100");
         txtNome = new JTextField("Cliente");
         Object[] texts = {lblMessage, txtIP, txtPorta, txtNome };
         JOptionPane.showMessageDialog(null, texts);
@@ -61,17 +61,17 @@ public class Tela extends JFrame {
         campoMensagem = new JTextField();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowActivated(java.awt.event.WindowEvent evt) {
+        addWindowListener(new WindowAdapter() {
+            public void windowActivated(WindowEvent evt) {
                 formWindowActivated(evt);
             }
 
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+            public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
-        titulo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        titulo.setFont(new Font("Tahoma", 1, 14)); // NOI18N
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setText("Chat");
 
@@ -82,22 +82,22 @@ public class Tela extends JFrame {
 
         jScrollPane2.setViewportView(scrollDoPainel);
 
-        botaoEnviar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        botaoEnviar.setForeground(new java.awt.Color(0, 51, 153));
+        botaoEnviar.setFont(new Font("Tahoma", 1, 12)); // NOI18N
+        botaoEnviar.setForeground(new Color(0, 51, 153));
         botaoEnviar.setText("Enviar");
-        botaoEnviar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        botaoEnviar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 botaoEnviarActionPerformed(evt);
             }
         });
 
-        campoMensagem.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
+        campoMensagem.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent evt) {
                 campoMensagemFocusGained(evt);
             }
         });
-        campoMensagem.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        campoMensagem.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
                 campoMensagemKeyPressed(evt);
             }
         });
@@ -135,11 +135,11 @@ public class Tela extends JFrame {
         pack();
     }
 
-    private void campoMensagemFocusGained(java.awt.event.FocusEvent evt) {
+    private void campoMensagemFocusGained(FocusEvent evt) {
         campoMensagem.setText("");
     }
 
-    private void campoMensagemKeyPressed(java.awt.event.KeyEvent evt) {
+    private void campoMensagemKeyPressed(KeyEvent evt) {
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){
             try {
                 controller.enviarMensagem(campoMensagem.getText());
@@ -149,7 +149,7 @@ public class Tela extends JFrame {
         }
     }
 
-    private void botaoEnviarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void botaoEnviarActionPerformed(ActionEvent evt) {
         try {
             controller.enviarMensagem(campoMensagem.getText());
         } catch (IOException e1) {
@@ -157,11 +157,11 @@ public class Tela extends JFrame {
         }
     }
 
-    private void formWindowActivated(java.awt.event.WindowEvent evt) {
+    private void formWindowActivated(WindowEvent evt) {
         // TODO add your handling code here:
     }
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {
+    private void formWindowClosing(WindowEvent evt) {
         try {
             controller.sair();
         } catch (IOException e) {

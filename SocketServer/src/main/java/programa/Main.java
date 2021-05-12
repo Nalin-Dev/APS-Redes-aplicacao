@@ -1,6 +1,7 @@
-package main;
+package main.java.programa;
 
-import server.Servidor;
+import main.java.programa.server.Servidor;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -10,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            final ServerSocket server = new ServerSocket(4200);
+            final ServerSocket server = new ServerSocket(4100);
 
             while(true){
                 System.out.println("Aguardando conexão...");
@@ -22,5 +23,5 @@ public class Main {
         }catch (Exception e) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
-    }// Fim do método main
+    }// Fim do método java.programa.main
 } //Fim da classe

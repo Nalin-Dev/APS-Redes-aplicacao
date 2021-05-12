@@ -1,12 +1,12 @@
-package program.main;
+package main.java.program;
 
-import program.view.Tela;
+import main.java.program.view.Tela;
 
 import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Tela tela = new Tela();
+        final Tela tela = new Tela();
     }
 }
