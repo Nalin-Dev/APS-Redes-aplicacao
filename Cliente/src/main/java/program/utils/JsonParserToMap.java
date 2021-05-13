@@ -13,7 +13,6 @@ public final class JsonParserToMap {
 
     public static Map<String, Object> parse(final String json) {
         final Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-
         try {
             final Gson gson = new Gson();
             return gson.fromJson(json, mapType );

@@ -35,7 +35,7 @@ public class Tela extends JFrame {
 
     public Tela() throws IOException {
         UIManager.put("OptionPane.minimumSize",new Dimension(250,200));
-        final JLabel lblMessage = new JLabel("Verificar!");
+        final JLabel lblMessage = new JLabel("Dados de entrada!");
         txtIP = new JTextField("127.0.0.1");
         txtPorta = new JTextField("4100");
         txtNome = new JTextField("Cliente");

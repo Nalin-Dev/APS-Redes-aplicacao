@@ -1,27 +1,26 @@
 package main.java.programa;
 
-import main.java.programa.server.Servidor;
-
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import main.java.programa.entities.Porta;
+import main.java.programa.server.ControladorServidor;
+import main.java.programa.view.Tela;
 
 public class Main {
 
+    /**
+     * <p> Inicializacao da applicacao.
+     */
     public static void main(String[] args) {
-        try{
-            final ServerSocket server = new ServerSocket(4100);
+        final Tela tela = new Tela();
+        Porta porta = new Porta(tela.getCampoPorta());
 
-            while(true){
-                System.out.println("Aguardando conexão...");
-                Socket con = server.accept();
-                System.out.println("Cliente conectado...");
-                Thread t = new Servidor(con);
-                t.start();
-            }
-        }catch (Exception e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+        while (porta.getValor().isEmpty() && !tela.getSair()) {
+            tela.reApresentar();
+            porta = new Porta(tela.getCampoPorta());
         }
-    }// Fim do método java.programa.main
-} //Fim da classe
+
+        if (!tela.getSair()) {
+            new ControladorServidor(porta.getValor().get());
+        }
+        tela.chamarFimPrograma();
+    }
+}

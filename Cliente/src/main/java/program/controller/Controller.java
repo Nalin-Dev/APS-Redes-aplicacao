@@ -1,14 +1,13 @@
 package main.java.program.controller;
 
-
 import main.java.program.entities.Cliente;
 import main.java.program.utils.InfoMensagem;
 import main.java.program.utils.JsonParserToMap;
 import main.java.program.view.Tela;
 import java.io.*;
 import java.net.Socket;
-import java.util.IllegalFormatCodePointException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Controller {
 
@@ -33,6 +32,7 @@ public class Controller {
         cliente.setOuw(new OutputStreamWriter(cliente.getOu()));
         cliente.setBfw(new BufferedWriter(cliente.getOuw()));
         tela.getCaixaDeTexto().append("SISTEMA: " + cliente.getNomeID() +" entrou na sala!\r\n");
+        Logger.getLogger(Controller.class.getName()).info("Entrando na sala...");
         cliente.getBfw().write(cliente.getNomeID() + "\r\n");
         cliente.getBfw().flush();
     }
@@ -43,7 +43,7 @@ public class Controller {
      * @throws IOException retorna IO Exception caso dê algum erro.
      */
     public void enviarMensagem(String msg) throws IOException{
-
+        Logger.getLogger(Controller.class.getName()).info("Mensagem enviada: " + msg);
         if("Sair".equals(msg)){
             cliente.getBfw().write("Desconectado\r\n");
             tela.getCaixaDeTexto().append("Desconectado \r\n");
@@ -78,38 +78,33 @@ public class Controller {
             if(bfr.ready()) {
                 msg = bfr.readLine();
 
-                System.out.println("JSON: " + msg);
+                Logger.getLogger(Controller.class.getName()).info("Mensagem recebida: " + msg);
 
                 if (!"".equals(msg)) {
-
-                    String nomeRemetente = "";
-                    String mensagem = "";
-                    String nome = "";
-
                     final Map<String, Object> json = JsonParserToMap.parse(msg);
-                    mensagemRecebida = json.containsKey("id") && json.containsKey("mensagem");
-                    boolean sair = json.containsKey("sair");
+
+                    mensagemRecebida = json.containsKey("mensagem");
+
+                    final String nomeRemetente = (String) json.get("id");
+                    final String nome = nomeRemetente.split("#")[0];
 
                     if (mensagemRecebida) {
-                        nomeRemetente = (String) json.get("id");
-                        mensagem = (String) json.get("mensagem");
-                        nome = nomeRemetente.split("#")[0];
+                        final String mensagem = (String) json.get("mensagem");
 
-                        if (!"".equals(nomeRemetente) && !json.containsKey("sistema")) {
-                            if ("".equals(ultimoRemetente) || !ultimoRemetente.equals(nomeRemetente)) {
-                                ultimoRemetente = nomeRemetente;
-                                tela.getCaixaDeTexto().append(String.format("\n[ %s ] te enviou:\n %s\r\n", nome, mensagem));
-                            } else {
-                                tela.getCaixaDeTexto().append(mensagem + "\r\n");
-                            }
+                        if ("".equals(ultimoRemetente) || !ultimoRemetente.equals(nomeRemetente)) {
+                            ultimoRemetente = nomeRemetente;
+                            tela.getCaixaDeTexto().append(String.format("\n[ %s ] te enviou:\n %s\r\n", nome, mensagem));
                         } else {
-                            final String sistema = (String) json.get("sistema");
+                            tela.getCaixaDeTexto().append(mensagem + "\r\n");
+                        }
+                    } else if (json.containsKey("sistema")) {
 
-                            if ("Desconectado".equalsIgnoreCase(sistema)) {
-                                tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  se desconectou.\r\n", nome));
-                            } else if ("Entrada".equalsIgnoreCase(sistema)) {
-                                tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  entrou na sala.\r\n", nome));
-                            }
+                        final String sistema = (String) json.get("sistema");
+
+                        if ("Desconectado".equalsIgnoreCase(sistema)) {
+                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  se desconectou.\r\n", nome));
+                        } else if ("Entrada".equalsIgnoreCase(sistema)) {
+                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  entrou na sala.\r\n", nome));
                         }
                     }
                 }

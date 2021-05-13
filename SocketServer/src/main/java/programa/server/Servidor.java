@@ -15,13 +15,13 @@ public class Servidor extends Thread {
 
     /**
      * Método construtor
-     * @param con do tipo Socket
+     * @param conexao do tipo Socket
      */
-    public Servidor(Socket con){
-        this.con = con;
+    public Servidor(final Socket conexao){
+        this.con = conexao;
         try {
-            InputStream in = con.getInputStream();
-            InputStreamReader inr = new InputStreamReader(in);
+            final InputStream in = conexao.getInputStream();
+            final InputStreamReader inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,7 +54,6 @@ public class Servidor extends Thread {
                 msg = bfr.readLine();
                 if (msg != null && !"Desconectado".equalsIgnoreCase(msg))
                 broadCast.enviarMensagemParaTodos(cliente, msg);
-                System.out.println(msg);
             }
 
             if (msg != null && "Desconectado".equalsIgnoreCase(msg.trim())) {
