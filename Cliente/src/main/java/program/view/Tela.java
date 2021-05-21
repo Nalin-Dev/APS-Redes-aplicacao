@@ -7,6 +7,7 @@ package main.java.program.view;/*
 
 
 import main.java.program.controller.Controller;
+import main.java.program.controller.MailController;
 import main.java.program.entities.Cliente;
 
 import javax.swing.*;
@@ -29,6 +30,7 @@ public class Tela extends JFrame {
     private JLabel titulo;
     private JButton botaoEmail;
     private Controller controller;
+    private MailController mailController;
 
 
     public Tela() throws IOException {
@@ -41,6 +43,7 @@ public class Tela extends JFrame {
 
         if (!telaInicial.getSair()) {
             controller = new Controller(new Cliente(telaInicial.getCampoNomeCliente().getText()), this);
+            mailController = new MailController(this);
             initComponents();
             setVisible(true);
             controller.conectar(telaInicial.getCampoIP().getText(), Integer.parseInt(telaInicial.getCampoPorta().getText()));
@@ -170,7 +173,7 @@ public class Tela extends JFrame {
     }
 
     private void botaoEmailActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        mailController.openEmailDialog();
     }
 
     private void formWindowActivated(WindowEvent evt) {
