@@ -1,11 +1,10 @@
 
+##### Inclua
+!**/Cliente
+!**/SocketServer
+!**.md
+!.gitignore
 
-
-# Excluindo arquivos .pdf
-
-**.pdf
-**/material
-**.sh
-**/.idea/
-**/out/
+##### Exclua tudo
+**
 

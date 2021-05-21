@@ -30,6 +30,7 @@ public class Tela extends JFrame {
     private final JTextField txtIP;
     private final JTextField txtPorta;
     private final JTextField txtNome;
+    private JButton botaoEmail;
     private final Controller controller;
 
 
@@ -38,8 +39,15 @@ public class Tela extends JFrame {
         final JLabel lblMessage = new JLabel("Dados de entrada!");
         txtIP = new JTextField("127.0.0.1");
         txtPorta = new JTextField("4100");
-        txtNome = new JTextField("Cliente");
+        txtNome = new JTextField("Entre com o nome do cliente. . .");
         Object[] texts = {lblMessage, txtIP, txtPorta, txtNome };
+
+        txtNome.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent evt) {
+                campoNomeFocusGained(evt);
+            }
+        });
+
         JOptionPane.showMessageDialog(null, texts);
 
         controller = new Controller(new Cliente(txtNome.getText()), this);
@@ -51,7 +59,6 @@ public class Tela extends JFrame {
 
     private void initComponents() {
 
-
         titulo = new JLabel();
         jScrollPane2 = new JScrollPane();
         scrollDoPainel = new JScrollPane();
@@ -59,6 +66,7 @@ public class Tela extends JFrame {
         botaoEnviar = new JButton();
         scrollCampoMensagem = new JScrollPane();
         campoMensagem = new JTextField();
+        botaoEmail = new javax.swing.JButton();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -91,11 +99,19 @@ public class Tela extends JFrame {
             }
         });
 
+        botaoEmail.setText("Email");
+        botaoEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoEmailActionPerformed(evt);
+            }
+        });
+
         campoMensagem.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent evt) {
                 campoMensagemFocusGained(evt);
             }
         });
+
         campoMensagem.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent evt) {
                 campoMensagemKeyPressed(evt);
@@ -103,40 +119,48 @@ public class Tela extends JFrame {
         });
         scrollCampoMensagem.setViewportView(campoMensagem);
 
-        GroupLayout layout = new GroupLayout(getContentPane());
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(24, 24, 24)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(titulo, GroupLayout.PREFERRED_SIZE, 441, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(layout.createSequentialGroup()
-                                                .addComponent(scrollCampoMensagem, GroupLayout.PREFERRED_SIZE, 340, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(scrollCampoMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(botaoEnviar, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 441, GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(botaoEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(botaoEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addContainerGap(18, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(titulo, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(botaoEnviar, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                                        .addComponent(scrollCampoMensagem))
-                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                                .addGap(19, 19, 19)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(botaoEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                                        .addComponent(titulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(botaoEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(scrollCampoMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         pack();
     }
 
     private void campoMensagemFocusGained(FocusEvent evt) {
         campoMensagem.setText("");
+    }
+
+    private void campoNomeFocusGained(FocusEvent evt) {
+        txtNome.setText("");
     }
 
     private void campoMensagemKeyPressed(KeyEvent evt) {
@@ -155,6 +179,10 @@ public class Tela extends JFrame {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    private void botaoEmailActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
     }
 
     private void formWindowActivated(WindowEvent evt) {
