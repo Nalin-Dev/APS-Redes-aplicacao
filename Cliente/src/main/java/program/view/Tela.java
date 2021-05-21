@@ -27,34 +27,27 @@ public class Tela extends JFrame {
     private JScrollPane scrollCampoMensagem;
     private JScrollPane scrollDoPainel;
     private JLabel titulo;
-    private final JTextField txtIP;
-    private final JTextField txtPorta;
-    private final JTextField txtNome;
     private JButton botaoEmail;
-    private final Controller controller;
+    private Controller controller;
 
 
     public Tela() throws IOException {
-        UIManager.put("OptionPane.minimumSize",new Dimension(250,200));
-        final JLabel lblMessage = new JLabel("Dados de entrada!");
-        txtIP = new JTextField("127.0.0.1");
-        txtPorta = new JTextField("4100");
-        txtNome = new JTextField("Entre com o nome do cliente. . .");
-        Object[] texts = {lblMessage, txtIP, txtPorta, txtNome };
 
-        txtNome.addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent evt) {
-                campoNomeFocusGained(evt);
-            }
-        });
+        final TelaInicial telaInicial = new TelaInicial();
 
-        JOptionPane.showMessageDialog(null, texts);
+        while (telaInicial.existeCamposInvalidos() && !telaInicial.getSair()) {
+            telaInicial.reApresentar();
+        }
 
-        controller = new Controller(new Cliente(txtNome.getText()), this);
-        initComponents();
-        setVisible(true);
-        controller.conectar(txtIP.getText(), Integer.parseInt(txtPorta.getText()));
-        controller.escutar();
+        if (!telaInicial.getSair()) {
+            controller = new Controller(new Cliente(telaInicial.getCampoNomeCliente().getText()), this);
+            initComponents();
+            setVisible(true);
+            controller.conectar(telaInicial.getCampoIP().getText(), Integer.parseInt(telaInicial.getCampoPorta().getText()));
+            controller.escutar();
+        }
+
+        telaInicial.chamarFimPrograma();
     }
 
     private void initComponents() {
@@ -119,7 +112,6 @@ public class Tela extends JFrame {
         });
         scrollCampoMensagem.setViewportView(campoMensagem);
 
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -157,10 +149,6 @@ public class Tela extends JFrame {
 
     private void campoMensagemFocusGained(FocusEvent evt) {
         campoMensagem.setText("");
-    }
-
-    private void campoNomeFocusGained(FocusEvent evt) {
-        txtNome.setText("");
     }
 
     private void campoMensagemKeyPressed(KeyEvent evt) {
