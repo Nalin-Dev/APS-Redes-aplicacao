@@ -93,7 +93,7 @@ public class Controller {
             while(a != -1 ){
 
                 Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
-                JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo:  " + arquivo.getNome() + "Com tamanho: " + arquivo.getTamanhoKB());
+                JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo!" +"\nNome: "+ arquivo.getNome() + "\nTamanho: " + arquivo.getTamanhoKB() + " kb");
                 int userSelection = fileChooser.showSaveDialog(tela);
                 String dir = null;
 
@@ -111,9 +111,9 @@ public class Controller {
 
 
         }catch (SocketException e) {
-            e.printStackTrace();
+
         }catch (IOException e) {
-            e.printStackTrace();
+
         }
 
     }
@@ -130,9 +130,9 @@ public class Controller {
             ois.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+
         }
 
         return obj;
@@ -152,10 +152,10 @@ public class Controller {
         arquivo.setNome(fileSelected.getName());
         arquivo.setTamanhoKB(kbSize);
 
-        byte[] fileSeriliazed = serializarArquivo(arquivo);
+        byte[] fileSerialized = serializarArquivo(arquivo);
 
 
-        bfo.write(fileSeriliazed);
+        bfo.write(fileSerialized);
         bfo.flush();
     }
 
