@@ -23,17 +23,15 @@ public class Controller {
     private String ultimoRemetente = "";
     private BufferedOutputStream bfo;
     private BufferedInputStream bfi;
-    JButton fileButton;
+
     JFileChooser fileChooser;
     private  Socket fileConnection;
 
     public Controller(Cliente cliente, Tela tela) {
         this.cliente = cliente;
         this.tela = tela;
-        fileButton = new JButton("Attach");
+
         fileChooser = new JFileChooser();
-
-
     }
 
     /***
@@ -93,9 +91,12 @@ public class Controller {
             while(a != -1 ){
 
                 Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
+                // TODO - Set Default filename to filechoose
+
                 JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo!" +"\nNome: "+ arquivo.getNome() + "\nTamanho: " + arquivo.getTamanhoKB() + " kb");
                 int userSelection = fileChooser.showSaveDialog(tela);
                 String dir = null;
+
 
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File fileToSave = fileChooser.getSelectedFile();
