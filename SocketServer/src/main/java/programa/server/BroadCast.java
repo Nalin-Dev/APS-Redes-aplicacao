@@ -45,6 +45,7 @@ public class BroadCast {
         final String mensagem = new JsonToStringBuilder()
                 .novaPropriedade("id", cliente.getNomeId())
                 .novaPropriedade("mensagem", msg)
+                .novaPropriedade("regiao", cliente.getRegiao())
                 .build();
 
         enviar(cliente, mensagem);
@@ -59,6 +60,7 @@ public class BroadCast {
         final String mensagem = new JsonToStringBuilder()
                 .novaPropriedade("id", cliente.getNomeId())
                 .novaPropriedade("sistema", msg)
+                .novaPropriedade("regiao", cliente.getRegiao())
                 .build();
 
         enviar(cliente, mensagem);

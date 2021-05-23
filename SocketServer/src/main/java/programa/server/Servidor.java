@@ -4,6 +4,7 @@ import main.java.programa.entities.Cliente;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +22,7 @@ public class Servidor extends Thread {
         this.con = conexao;
         try {
             final InputStream in = conexao.getInputStream();
-            final InputStreamReader inr = new InputStreamReader(in);
+            final InputStreamReader inr = new InputStreamReader(in, StandardCharsets.UTF_8);
             bfr = new BufferedReader(inr);
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,10 +43,11 @@ public class Servidor extends Thread {
             final BufferedWriter bfw = new BufferedWriter(ouw);
 
             msg = bfr.readLine();
+            final String[] splitMsg = msg.split(";");
+            final String nomeId = splitMsg[0];
+            final String regiao = splitMsg[1];
 
-            final String nomeId = msg;
-
-            cliente = new Cliente(bfw, nomeId);
+            cliente = new Cliente(bfw, nomeId, regiao);
 
             broadCast.adicionarClient(cliente);
 

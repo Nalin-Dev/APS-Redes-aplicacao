@@ -10,10 +10,12 @@ import java.io.BufferedWriter;
 public class Cliente {
     private final BufferedWriter bufferedWriter;
     private final String nomeId;
+    private final String regiao;
 
-    public Cliente(BufferedWriter bufferedWriter, String nomeId) {
+    public Cliente(BufferedWriter bufferedWriter, String nomeId, String regiao) {
         this.bufferedWriter = bufferedWriter;
         this.nomeId = nomeId;
+        this.regiao = regiao;
     }
 
     public BufferedWriter getBufferedWriter() {
@@ -22,6 +24,10 @@ public class Cliente {
 
     public String getNomeId() {
         return nomeId;
+    }
+
+    public String getRegiao() {
+        return regiao;
     }
 
     /**

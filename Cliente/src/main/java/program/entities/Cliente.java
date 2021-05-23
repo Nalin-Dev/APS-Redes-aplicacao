@@ -9,14 +9,16 @@ public class Cliente  {
 
     private final String nome;
     private final String nomeID;
+    private final String regiao;
     private Socket socket;
     private OutputStream ou ;
     private Writer ouw;
     private BufferedWriter bfw;
 
-    public Cliente(final String nome) throws IOException {
+    public Cliente(final String nome, final String regiao) throws IOException {
         this.nome = nome;
         nomeID = setNomeID(nome);
+        this.regiao = regiao;
     }
 
     private String setNomeID(final String nome) {
@@ -29,8 +31,8 @@ public class Cliente  {
         return nomeID;
     }
 
-    public String getNome() {
-        return nome;
+    public String getRegiao() {
+        return regiao;
     }
 
     public void setSocket(Socket socket) {

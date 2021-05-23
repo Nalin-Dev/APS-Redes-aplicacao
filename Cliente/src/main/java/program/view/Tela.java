@@ -40,7 +40,7 @@ public class Tela extends JFrame {
         }
 
         if (!telaInicial.getSair()) {
-            controller = new Controller(new Cliente(telaInicial.getCampoNomeCliente().getText()), this);
+            controller = new Controller(new Cliente(telaInicial.getCampoNomeCliente().getText(), telaInicial.getRegiao()), this);
             initComponents();
             setVisible(true);
             controller.conectar(telaInicial.getCampoIP().getText(), Integer.parseInt(telaInicial.getCampoPorta().getText()));
@@ -72,7 +72,7 @@ public class Tela extends JFrame {
             }
         });
 
-        titulo.setFont(new Font("Tahoma", 1, 14)); // NOI18N
+        titulo.setFont(new Font("Tahoma", 1, 14));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setText("Chat");
 
@@ -83,7 +83,7 @@ public class Tela extends JFrame {
 
         jScrollPane2.setViewportView(scrollDoPainel);
 
-        botaoEnviar.setFont(new Font("Tahoma", 1, 12)); // NOI18N
+        botaoEnviar.setFont(new Font("Tahoma", 1, 12));
         botaoEnviar.setForeground(new Color(0, 51, 153));
         botaoEnviar.setText("Enviar");
         botaoEnviar.addActionListener(new ActionListener() {

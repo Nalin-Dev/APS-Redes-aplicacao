@@ -31,15 +31,20 @@ public class TelaInicial extends JFrame {
     private final Campo campoNomeCliente;
     private final JLabel lblMessage;
     private final List<Object> componentes = new ArrayList<>();
+    private final JComboBox<String> regiao = new JComboBox<>();
     private MensagemBuilder mensagemErro = new MensagemBuilder();
     private int selecao;
 
     public TelaInicial() {
+        regiao.addItem("Salesópolis");
+        regiao.addItem("Grande São Paulo");
+        regiao.setSelectedIndex(0);
+
         this.campoPorta = new Campo(new JTextField(VAL_INIT_CAMPO_PORTA), "Campo Porta: contém valores invalidos", new ValidaPorta());
         this.campoIP = new Campo(new JTextField(VAL_INIT_CAMPO_IP), "Campo IP: contém valores invalidos", new ValidaIP());
         this.campoNomeCliente = new Campo(new JTextField(VAL_INIT_CAMPO_NOME), "Campo nome cliente: contém valores invalidos");
         this.lblMessage = new JLabel("Dados de entrada!");
-        componentes.addAll(Arrays.asList(this.campoPorta, this.campoIP, this.campoNomeCliente));
+        componentes.addAll(Arrays.asList(this.campoPorta, this.campoIP, this.campoNomeCliente, regiao));
         chamarTela();
     }
 
@@ -59,7 +64,8 @@ public class TelaInicial extends JFrame {
                 Arrays.asList(lblMessage,
                         this.campoPorta.getCampo(),
                         this.campoIP.getCampo(),
-                        this.campoNomeCliente.getCampo()).toArray(),
+                        this.campoNomeCliente.getCampo(),
+                        regiao).toArray(),
                 "Entrada Chat",
                 OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -71,7 +77,7 @@ public class TelaInicial extends JFrame {
     public boolean existeCamposInvalidos() {
         final List<String> erros = new ArrayList<>();
 
-        componentes.forEach(cp -> {
+        componentes.stream().filter(item -> item instanceof Campo).forEach(cp -> {
             final Campo campo = (Campo) cp;
             if (!campo.isValido()) erros.add(campo.getMensagemErro());
         });
@@ -94,6 +100,10 @@ public class TelaInicial extends JFrame {
 
     public JTextField getCampoNomeCliente() {
         return campoNomeCliente.getCampo();
+    }
+
+    public String getRegiao() {
+        return (String) regiao.getSelectedItem();
     }
 
     public void chamarFimPrograma() {

@@ -3,9 +3,11 @@ package main.java.program.controller;
 import main.java.program.entities.Cliente;
 import main.java.program.utils.InfoMensagem;
 import main.java.program.utils.JsonParserToMap;
+import main.java.program.utils.MensagemBuilder;
 import main.java.program.view.Tela;
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -29,11 +31,15 @@ public class Controller {
         final Socket socket = new Socket(ip, porta);
         cliente.setSocket(socket);
         cliente.setOu(socket.getOutputStream());
-        cliente.setOuw(new OutputStreamWriter(cliente.getOu()));
+        cliente.setOuw(new OutputStreamWriter(cliente.getOu(), StandardCharsets.UTF_8));
         cliente.setBfw(new BufferedWriter(cliente.getOuw()));
-        tela.getCaixaDeTexto().append("SISTEMA: " + cliente.getNomeID() +" entrou na sala!\r\n");
+        tela.getCaixaDeTexto().append(String.format("SISTEMA: %s, de %s, entrou na sala! \r\n", cliente.getNomeID(), cliente.getRegiao()));
+
         Logger.getLogger(Controller.class.getName()).info("Entrando na sala...");
-        cliente.getBfw().write(cliente.getNomeID() + "\r\n");
+
+        final String msg = String.format("%s;%s \r\n",cliente.getNomeID(), cliente.getRegiao());
+
+        cliente.getBfw().write(msg);
         cliente.getBfw().flush();
     }
 
@@ -48,7 +54,7 @@ public class Controller {
             cliente.getBfw().write("Desconectado\r\n");
             tela.getCaixaDeTexto().append("Desconectado \r\n");
         } else if (!"".equals(msg)) {
-            cliente.getBfw().write(msg+"\r\n");
+            cliente.getBfw().write(msg +"\r\n");
             ultimoRemetente = "";
 
             if (!mensagemRecebida) {
@@ -69,7 +75,7 @@ public class Controller {
      */
     public void escutar() throws IOException {
         final InputStream in = cliente.getSocket().getInputStream();
-        final InputStreamReader inr = new InputStreamReader(in);
+        final InputStreamReader inr = new InputStreamReader(in, StandardCharsets.UTF_8);
         final BufferedReader bfr = new BufferedReader(inr);
         String msg = "";
 
@@ -87,13 +93,15 @@ public class Controller {
 
                     final String nomeRemetente = (String) json.get("id");
                     final String nome = nomeRemetente.split("#")[0];
+                    final String regiao = (String) json.get("regiao");
 
                     if (mensagemRecebida) {
                         final String mensagem = (String) json.get("mensagem");
 
+
                         if ("".equals(ultimoRemetente) || !ultimoRemetente.equals(nomeRemetente)) {
                             ultimoRemetente = nomeRemetente;
-                            tela.getCaixaDeTexto().append(String.format("\n[ %s ] te enviou:\n %s\r\n", nome, mensagem));
+                            tela.getCaixaDeTexto().append(String.format("\n[ %s ] de %s, te enviou:\n %s\r\n", nome,regiao, mensagem));
                         } else {
                             tela.getCaixaDeTexto().append(mensagem + "\r\n");
                         }
@@ -102,9 +110,9 @@ public class Controller {
                         final String sistema = (String) json.get("sistema");
 
                         if ("Desconectado".equalsIgnoreCase(sistema)) {
-                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  se desconectou.\r\n", nome));
+                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, se desconectou.\r\n", nome, regiao));
                         } else if ("Entrada".equalsIgnoreCase(sistema)) {
-                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ]  entrou na sala.\r\n", nome));
+                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, entrou na sala.\r\n", nome ,regiao));
                         }
                     }
                 }

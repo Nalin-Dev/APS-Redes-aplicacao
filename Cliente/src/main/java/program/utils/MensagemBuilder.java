@@ -1,5 +1,7 @@
 package main.java.program.utils;
 
+import java.nio.charset.StandardCharsets;
+
 public class MensagemBuilder {
 
     private final StringBuilder mensagem = new StringBuilder();
