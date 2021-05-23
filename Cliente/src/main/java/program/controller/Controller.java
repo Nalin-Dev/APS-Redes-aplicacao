@@ -1,11 +1,17 @@
 package main.java.program.controller;
 
+import main.java.program.entities.Arquivo;
 import main.java.program.entities.Cliente;
 import main.java.program.utils.InfoMensagem;
 import main.java.program.utils.JsonParserToMap;
 import main.java.program.view.Tela;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -15,10 +21,19 @@ public class Controller {
     private final Tela tela;
     private boolean mensagemRecebida = true;
     private String ultimoRemetente = "";
+    private BufferedOutputStream bfo;
+    private BufferedInputStream bfi;
+    JButton fileButton;
+    JFileChooser fileChooser;
+    private  Socket fileConnection;
 
     public Controller(Cliente cliente, Tela tela) {
         this.cliente = cliente;
         this.tela = tela;
+        fileButton = new JButton("Attach");
+        fileChooser = new JFileChooser();
+
+
     }
 
     /***
@@ -27,6 +42,11 @@ public class Controller {
      */
     public void conectar(final String ip, final Integer porta) throws IOException{
         final Socket socket = new Socket(ip, porta);
+        fileConnection = new Socket(ip, porta + 1);
+        bfo = new BufferedOutputStream
+                (fileConnection.getOutputStream());
+        bfi = new BufferedInputStream(
+                fileConnection.getInputStream());
         cliente.setSocket(socket);
         cliente.setOu(socket.getOutputStream());
         cliente.setOuw(new OutputStreamWriter(cliente.getOu()));
@@ -63,10 +83,96 @@ public class Controller {
         tela.limpaMensagem();
     }
 
-    /**
-     * Método usado para receber mensagem do servidor
-     * @throws IOException retorna IO Exception caso dê algum erro.
-     */
+
+    public void escutarFile() {
+        try{
+
+            byte[] objectAsByte= new byte[fileConnection.getReceiveBufferSize()];
+
+            int a = bfi.read(objectAsByte);
+            while(a != -1 ){
+
+                Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
+                JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo:  " + arquivo.getNome() + "Com tamanho: " + arquivo.getTamanhoKB());
+                int userSelection = fileChooser.showSaveDialog(tela);
+                String dir = null;
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    dir=  fileToSave.getAbsolutePath();
+                }
+                if(dir != null)
+                {
+                    FileOutputStream fos = new FileOutputStream(dir);
+                    fos.write(arquivo.getConteudo());
+                }
+                a = bfi.read(objectAsByte);
+            }
+
+
+        }catch (SocketException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static Object getObjectFromByte(byte[] objectAsByte) {
+        Object obj = null;
+
+        try {
+            ByteArrayInputStream bis  = new ByteArrayInputStream(objectAsByte);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+            obj = ois.readObject();
+
+            bis.close();
+            ois.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return obj;
+
+    }
+
+    public void enviarFile(File fileSelected) throws IOException {
+
+        byte[] bFile = new byte[(int) fileSelected.length()];
+        FileInputStream fis = new FileInputStream(fileSelected);
+        fis.read(bFile);
+        fis.close();
+
+        long kbSize = fileSelected.length() / 1024;
+        Arquivo arquivo = new Arquivo();
+        arquivo.setConteudo(bFile);
+        arquivo.setNome(fileSelected.getName());
+        arquivo.setTamanhoKB(kbSize);
+
+        byte[] fileSeriliazed = serializarArquivo(arquivo);
+
+
+        bfo.write(fileSeriliazed);
+        bfo.flush();
+    }
+
+    private byte[] serializarArquivo(Arquivo arquivo){
+        try {
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            ObjectOutputStream ous;
+            ous = new ObjectOutputStream(bao);
+            ous.writeObject(arquivo);
+            return bao.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public void escutar() throws IOException {
         final InputStream in = cliente.getSocket().getInputStream();
         final InputStreamReader inr = new InputStreamReader(in);
@@ -123,5 +229,7 @@ public class Controller {
         cliente.getOuw().close();
         cliente.getOu().close();
         cliente.getSocket().close();
+        bfo.close();
+        fileConnection.close();
     }
 }

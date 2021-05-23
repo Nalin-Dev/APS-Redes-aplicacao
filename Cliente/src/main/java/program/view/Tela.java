@@ -12,6 +12,7 @@ import main.java.program.entities.Cliente;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -27,10 +28,14 @@ public class Tela extends JFrame {
     private JScrollPane scrollCampoMensagem;
     private JScrollPane scrollDoPainel;
     private JLabel titulo;
+    private JFileChooser fileChooser;
+    private JButton buttonChooser;
+
     private final JTextField txtIP;
     private final JTextField txtPorta;
     private final JTextField txtNome;
     private final Controller controller;
+
 
 
     public Tela() throws IOException {
@@ -46,7 +51,9 @@ public class Tela extends JFrame {
         initComponents();
         setVisible(true);
         controller.conectar(txtIP.getText(), Integer.parseInt(txtPorta.getText()));
+        controller.escutarFile();
         controller.escutar();
+
     }
 
     private void initComponents() {
@@ -59,6 +66,9 @@ public class Tela extends JFrame {
         botaoEnviar = new JButton();
         scrollCampoMensagem = new JScrollPane();
         campoMensagem = new JTextField();
+        buttonChooser = new JButton("...");
+        fileChooser = new JFileChooser();
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -91,6 +101,18 @@ public class Tela extends JFrame {
             }
         });
 
+
+        buttonChooser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    buttonActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         campoMensagem.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent evt) {
                 campoMensagemFocusGained(evt);
@@ -114,6 +136,7 @@ public class Tela extends JFrame {
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(scrollCampoMensagem, GroupLayout.PREFERRED_SIZE, 340, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
+                                                .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(botaoEnviar, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 441, GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(18, Short.MAX_VALUE))
@@ -127,6 +150,7 @@ public class Tela extends JFrame {
                                 .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(botaoEnviar, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                                         .addComponent(scrollCampoMensagem))
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -147,6 +171,16 @@ public class Tela extends JFrame {
                 e1.printStackTrace();
             }
         }
+    }
+
+
+    private void buttonActionPerformed(ActionEvent evt) throws IOException {
+
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                controller.enviarFile(file);
+            }
+
     }
 
     private void botaoEnviarActionPerformed(ActionEvent evt) {

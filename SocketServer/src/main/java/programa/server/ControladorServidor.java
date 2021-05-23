@@ -27,12 +27,18 @@ public class ControladorServidor {
     private void start(final Integer porta) {
         try{
             final ServerSocket server = new ServerSocket(porta);
+            final ServerSocket serverFile = new ServerSocket(porta + 1);
 
             while(true) {
                 Logger.getLogger(ControladorServidor.class.getName()).info("Aguardando conexão...");
+                final Socket conFile = serverFile.accept();
                 final Socket con = server.accept();
+
+                final Thread tFile = new FileServer(conFile);
+
                 final Thread t = new Servidor(con);
                 t.start();
+                tFile.start();
             }
         }catch (Exception e) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
