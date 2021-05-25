@@ -1,6 +1,7 @@
 package main.java.programa.server;
 
 import main.java.programa.entities.Cliente;
+import main.java.programa.entities.ClienteFile;
 import main.java.programa.utils.JsonToStringBuilder;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 public class BroadCast {
 
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
+    private static final ArrayList<ClienteFile> clientesFile = new ArrayList<>();
 
     public BroadCast() {
     }
@@ -24,6 +26,10 @@ public class BroadCast {
         clientes.add(cliente);
         Logger.getLogger(BroadCast.class.getName()).info(cliente.getNomeId() + " se conectou...");
         enviarMensagemSistemaParaTodos(cliente, "entrada");
+    }
+
+    public void adicionarClientFile(final ClienteFile cliente) throws IOException {
+        clientesFile.add(cliente);
     }
 
     /***
@@ -49,6 +55,14 @@ public class BroadCast {
                 .build();
 
         enviar(cliente, mensagem);
+    }
+
+    public void enviarFileParaTodos(byte[] msg) throws  IOException {
+        for(ClienteFile  c : clientesFile) {
+            Logger.getLogger(BroadCast.class.getName()).info( " enviou arquivo para todos: ");
+            c.getBufferedOutputStream().write(msg);
+            c.getBufferedOutputStream().flush();
+        };
     }
 
     /***

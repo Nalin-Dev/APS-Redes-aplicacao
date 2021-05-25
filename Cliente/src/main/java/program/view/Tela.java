@@ -9,10 +9,15 @@ package main.java.program.view;/*
 import main.java.program.controller.Controller;
 import main.java.program.entities.Cliente;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -29,6 +34,8 @@ public class Tela extends JFrame {
     private JLabel titulo;
     private JButton botaoEmail;
     private Controller controller;
+    private JFileChooser fileChooser;
+    private JButton buttonChooser;
 
 
     public Tela() throws IOException {
@@ -44,13 +51,15 @@ public class Tela extends JFrame {
             initComponents();
             setVisible(true);
             controller.conectar(telaInicial.getCampoIP().getText(), Integer.parseInt(telaInicial.getCampoPorta().getText()));
+            controller.escutarFile();
             controller.escutar();
         }
 
         telaInicial.chamarFimPrograma();
     }
 
-    private void initComponents() {
+    private void initComponents() throws IOException {
+        Image img = ImageIO.read(Tela.class.getClassLoader().getResource("clip.png"));
 
         titulo = new JLabel();
         jScrollPane2 = new JScrollPane();
@@ -60,6 +69,19 @@ public class Tela extends JFrame {
         scrollCampoMensagem = new JScrollPane();
         campoMensagem = new JTextField();
         botaoEmail = new javax.swing.JButton();
+        buttonChooser = new JButton();
+        buttonChooser.setMargin(new Insets(0, 0, 0, 0));
+        ImageIcon icon =new ImageIcon(img);
+
+        buttonChooser.setIcon(new ImageIcon(getScaledImage(icon.getImage(), 35, 35)));
+
+        buttonChooser.setOpaque(false);
+        buttonChooser.setContentAreaFilled(false);
+        buttonChooser.setBorderPainted(false);
+        buttonChooser.setBorder(null);
+
+        fileChooser = new JFileChooser();
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -92,6 +114,18 @@ public class Tela extends JFrame {
             }
         });
 
+
+        buttonChooser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    buttonActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         botaoEmail.setText("Email");
         botaoEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,7 +155,9 @@ public class Tela extends JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(scrollCampoMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
+                                                .addGap(6, 6, 6)
+                                                .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(6, 6, 6)
                                                 .addComponent(botaoEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(layout.createSequentialGroup()
@@ -140,13 +176,21 @@ public class Tela extends JFrame {
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(botaoEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(scrollCampoMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap()));
 
         pack();
     }
-
+    private Image getScaledImage(Image srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        return resizedImg;
+    }
     private void campoMensagemFocusGained(FocusEvent evt) {
         campoMensagem.setText("");
     }
@@ -159,6 +203,16 @@ public class Tela extends JFrame {
                 e1.printStackTrace();
             }
         }
+    }
+
+
+    private void buttonActionPerformed(ActionEvent evt) throws IOException {
+
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                controller.enviarFile(file);
+            }
+
     }
 
     private void botaoEnviarActionPerformed(ActionEvent evt) {
