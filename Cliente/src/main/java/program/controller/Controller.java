@@ -23,17 +23,15 @@ public class Controller {
     private String ultimoRemetente = "";
     private BufferedOutputStream bfo;
     private BufferedInputStream bfi;
-    JButton fileButton;
+
     JFileChooser fileChooser;
     private  Socket fileConnection;
 
     public Controller(Cliente cliente, Tela tela) {
         this.cliente = cliente;
         this.tela = tela;
-        fileButton = new JButton("Attach");
+
         fileChooser = new JFileChooser();
-
-
     }
 
     /***
@@ -98,6 +96,7 @@ public class Controller {
                 int userSelection = fileChooser.showSaveDialog(tela);
 
                 String dir = null;
+
 
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File fileToSave = fileChooser.getSelectedFile();
