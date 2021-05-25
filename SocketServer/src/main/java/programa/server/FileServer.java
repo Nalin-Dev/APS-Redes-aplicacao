@@ -1,9 +1,6 @@
 package main.java.programa.server;
 
-
-import main.java.programa.entities.Cliente;
 import main.java.programa.entities.ClienteFile;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Level;
