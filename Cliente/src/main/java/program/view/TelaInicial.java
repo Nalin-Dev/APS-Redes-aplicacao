@@ -58,13 +58,17 @@ public class TelaInicial extends JFrame {
     }
 
     private void chamarTela() {
-        UIManager.put("OptionPane.minimumSize", new Dimension(250, 200));
+        UIManager.put("OptionPane.minimumSize", new Dimension(300, 300));
         selecao = JOptionPane.showOptionDialog(
                 null,
                 Arrays.asList(lblMessage,
+                        new JLabel("Porta: "),
                         this.campoPorta.getCampo(),
+                        new JLabel("IP: "),
                         this.campoIP.getCampo(),
+                        new JLabel("Nome colaborador: "),
                         this.campoNomeCliente.getCampo(),
+                        new JLabel("Região: "),
                         regiao).toArray(),
                 "Entrada Chat",
                 OK_CANCEL_OPTION,
