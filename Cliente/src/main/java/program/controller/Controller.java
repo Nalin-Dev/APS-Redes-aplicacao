@@ -93,8 +93,10 @@ public class Controller {
             while(a != -1 ){
 
                 Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
+                fileChooser.setSelectedFile(new File(arquivo.getNome()));
                 JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo!" +"\nNome: "+ arquivo.getNome() + "\nTamanho: " + arquivo.getTamanhoKB() + " kb");
                 int userSelection = fileChooser.showSaveDialog(tela);
+
                 String dir = null;
 
                 if (userSelection == JFileChooser.APPROVE_OPTION) {

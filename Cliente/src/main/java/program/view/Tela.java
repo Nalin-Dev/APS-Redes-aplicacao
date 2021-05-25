@@ -9,11 +9,14 @@ package main.java.program.view;/*
 import main.java.program.controller.Controller;
 import main.java.program.entities.Cliente;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -56,9 +59,9 @@ public class Tela extends JFrame {
 
     }
 
-    private void initComponents() {
+    private void initComponents() throws IOException {
 
-
+        Image img = ImageIO.read(Tela.class.getClassLoader().getResource("clip.png"));
         titulo = new JLabel();
         jScrollPane2 = new JScrollPane();
         scrollDoPainel = new JScrollPane();
@@ -66,7 +69,17 @@ public class Tela extends JFrame {
         botaoEnviar = new JButton();
         scrollCampoMensagem = new JScrollPane();
         campoMensagem = new JTextField();
-        buttonChooser = new JButton("...");
+        buttonChooser = new JButton();
+        buttonChooser.setMargin(new Insets(0, 0, 0, 0));
+        ImageIcon icon =new ImageIcon(img);
+
+        buttonChooser.setIcon(new ImageIcon(getScaledImage(icon.getImage(), 35, 35)));
+
+        buttonChooser.setOpaque(false);
+        buttonChooser.setContentAreaFilled(false);
+        buttonChooser.setBorderPainted(false);
+        buttonChooser.setBorder(null);
+
         fileChooser = new JFileChooser();
 
 
@@ -135,8 +148,9 @@ public class Tela extends JFrame {
                                         .addComponent(titulo, GroupLayout.PREFERRED_SIZE, 441, GroupLayout.PREFERRED_SIZE)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(scrollCampoMensagem, GroupLayout.PREFERRED_SIZE, 340, GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(6, 6, 6)
+                                                .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(6, 6, 6)
                                                 .addComponent(botaoEnviar, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 441, GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(18, Short.MAX_VALUE))
@@ -150,7 +164,7 @@ public class Tela extends JFrame {
                                 .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(buttonChooser, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(botaoEnviar, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                                         .addComponent(scrollCampoMensagem))
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -158,7 +172,14 @@ public class Tela extends JFrame {
 
         pack();
     }
-
+    private Image getScaledImage(Image srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        return resizedImg;
+    }
     private void campoMensagemFocusGained(FocusEvent evt) {
         campoMensagem.setText("");
     }

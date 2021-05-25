@@ -14,7 +14,6 @@ public class FileServer extends Thread{
     private  BufferedOutputStream bf;
     private final BroadCast broadCast = new BroadCast();
 
-
     public FileServer(final Socket conexao){
         this.con = conexao;
         try {
