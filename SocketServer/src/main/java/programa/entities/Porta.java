@@ -30,6 +30,6 @@ public class Porta {
      * @return {@code Optional<Integer>}
      */
     public Optional<Integer> getValor() {
-        return Optional.ofNullable(valor);
+        return Optional.ofNullable(valor) ;
     }
 }

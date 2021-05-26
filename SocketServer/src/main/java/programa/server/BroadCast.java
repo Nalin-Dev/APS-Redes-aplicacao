@@ -36,7 +36,9 @@ public class BroadCast {
      * Método responsavel por remover um cliente desconectado da lista de clientes
      * @param cliente do tipo Cliente
      */
-    public void removerClient(final Cliente cliente) {
+    public void removerClient(final Cliente cliente) throws IOException {
+        clientesFile.get(clientes.indexOf(cliente)).getBufferedOutputStream().close();
+        clientesFile.remove(clientes.indexOf(cliente));
         clientes.remove(cliente);
         Logger.getLogger(BroadCast.class.getName()).info(cliente.getNomeId() + " se desconectou...");
         Logger.getLogger(BroadCast.class.getName()).info("Numero de clientes ainda conectados: " + clientes.size());
@@ -57,12 +59,18 @@ public class BroadCast {
         enviar(cliente, mensagem);
     }
 
-    public void enviarFileParaTodos(byte[] msg) throws  IOException {
-        for(ClienteFile  c : clientesFile) {
-            Logger.getLogger(BroadCast.class.getName()).info( " enviou arquivo para todos: ");
-            c.getBufferedOutputStream().write(msg);
-            c.getBufferedOutputStream().flush();
-        };
+    public void enviarFileParaTodos(ClienteFile cliente, byte[] msg) throws  IOException {
+        if (!close(cliente)) {
+            final List<ClienteFile> clienteList = clientesFile.stream()
+                    .filter(c -> !(c.getBufferedOutputStream() == cliente.getBufferedOutputStream())).collect(Collectors.toList());
+
+            for(ClienteFile  c : clienteList) {
+                Logger.getLogger(BroadCast.class.getName()).info( " enviou arquivo para todos: ");
+                c.getBufferedOutputStream().write(msg);
+                c.getBufferedOutputStream().flush();
+            };
+        }
+
     }
 
     /***
@@ -99,5 +107,9 @@ public class BroadCast {
                 c.getBufferedWriter().flush();
             }
         }
+    }
+
+    public boolean close(ClienteFile cliente) {
+        return !clientesFile.contains(cliente);
     }
 }

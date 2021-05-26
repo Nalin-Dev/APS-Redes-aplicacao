@@ -97,23 +97,26 @@ public class Controller {
             while(a != -1 ){
 
                 Arquivo arquivo = (Arquivo) getObjectFromByte(objectAsByte);
-                fileChooser.setSelectedFile(new File(arquivo.getNome()));
-                JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo!" +"\nNome: "+ arquivo.getNome() + "\nTamanho: " + arquivo.getTamanhoKB() + " kb");
-                int userSelection = fileChooser.showSaveDialog(tela);
 
-                String dir = null;
+                if(arquivo != null) {
+                    fileChooser.setSelectedFile(new File(arquivo.getNome()));
+                    JOptionPane.showMessageDialog(tela, "Você recebeu um arquivo!" +"\nNome: "+ arquivo.getNome() + "\nTamanho: " + arquivo.getTamanhoKB() + " kb");
+                    int userSelection = fileChooser.showSaveDialog(tela);
+
+                    String dir = null;
 
 
-                if (userSelection == JFileChooser.APPROVE_OPTION) {
-                    File fileToSave = fileChooser.getSelectedFile();
-                    dir=  fileToSave.getAbsolutePath();
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        File fileToSave = fileChooser.getSelectedFile();
+                        dir=  fileToSave.getAbsolutePath();
+                    }
+                    if(dir != null)
+                    {
+                        FileOutputStream fos = new FileOutputStream(dir);
+                        fos.write(arquivo.getConteudo());
+                    }
+                    a = bfi.read(objectAsByte);
                 }
-                if(dir != null)
-                {
-                    FileOutputStream fos = new FileOutputStream(dir);
-                    fos.write(arquivo.getConteudo());
-                }
-                a = bfi.read(objectAsByte);
             }
 
 
@@ -162,6 +165,7 @@ public class Controller {
         byte[] fileSerialized = serializarArquivo(arquivo);
 
 
+        assert fileSerialized != null;
         bfo.write(fileSerialized);
         bfo.flush();
     }
@@ -181,45 +185,47 @@ public class Controller {
 
 
     public void escutar() throws IOException {
-        final InputStream in = cliente.getSocket().getInputStream();
-        final InputStreamReader inr = new InputStreamReader(in, StandardCharsets.UTF_8);
-        final BufferedReader bfr = new BufferedReader(inr);
-        String msg = "";
+        if (!cliente.getSocket().isClosed()) {
+            final InputStream in = cliente.getSocket().getInputStream();
+            final InputStreamReader inr = new InputStreamReader(in, StandardCharsets.UTF_8);
+            final BufferedReader bfr = new BufferedReader(inr);
+            String msg = "";
 
-        while(!"Sair".equalsIgnoreCase(msg)) {
+            while(!"Sair".equalsIgnoreCase(msg)) {
 
-            if(bfr.ready()) {
-                msg = bfr.readLine();
+                if(bfr.ready()) {
+                    msg = bfr.readLine();
 
-                Logger.getLogger(Controller.class.getName()).info("Mensagem recebida: " + msg);
+                    Logger.getLogger(Controller.class.getName()).info("Mensagem recebida: " + msg);
 
-                if (!"".equals(msg)) {
-                    final Map<String, Object> json = JsonParserToMap.parse(msg);
+                    if (!"".equals(msg)) {
+                        final Map<String, Object> json = JsonParserToMap.parse(msg);
 
-                    mensagemRecebida = json.containsKey("mensagem");
+                        mensagemRecebida = json.containsKey("mensagem");
 
-                    final String nomeRemetente = (String) json.get("id");
-                    final String nome = nomeRemetente.split("#")[0];
-                    final String regiao = (String) json.get("regiao");
+                        final String nomeRemetente = (String) json.get("id");
+                        final String nome = nomeRemetente.split("#")[0];
+                        final String regiao = (String) json.get("regiao");
 
-                    if (mensagemRecebida) {
-                        final String mensagem = (String) json.get("mensagem");
+                        if (mensagemRecebida) {
+                            final String mensagem = (String) json.get("mensagem");
 
 
-                        if ("".equals(ultimoRemetente) || !ultimoRemetente.equals(nomeRemetente)) {
-                            ultimoRemetente = nomeRemetente;
-                            tela.getCaixaDeTexto().append(String.format("\n[ %s ] de %s, te enviou:\n %s\r\n", nome,regiao, mensagem));
-                        } else {
-                            tela.getCaixaDeTexto().append(mensagem + "\r\n");
-                        }
-                    } else if (json.containsKey("sistema")) {
+                            if ("".equals(ultimoRemetente) || !ultimoRemetente.equals(nomeRemetente)) {
+                                ultimoRemetente = nomeRemetente;
+                                tela.getCaixaDeTexto().append(String.format("\n[ %s ] de %s, te enviou:\n %s\r\n", nome,regiao, mensagem));
+                            } else {
+                                tela.getCaixaDeTexto().append(mensagem + "\r\n");
+                            }
+                        } else if (json.containsKey("sistema")) {
 
-                        final String sistema = (String) json.get("sistema");
+                            final String sistema = (String) json.get("sistema");
 
-                        if ("Desconectado".equalsIgnoreCase(sistema)) {
-                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, se desconectou.\r\n", nome, regiao));
-                        } else if ("Entrada".equalsIgnoreCase(sistema)) {
-                            tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, entrou na sala.\r\n", nome ,regiao));
+                            if ("Desconectado".equalsIgnoreCase(sistema)) {
+                                tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, se desconectou.\r\n", nome, regiao));
+                            } else if ("Entrada".equalsIgnoreCase(sistema)) {
+                                tela.getCaixaDeTexto().append(String.format("\nSISTEMA: [ %s ] de %s, entrou na sala.\r\n", nome ,regiao));
+                            }
                         }
                     }
                 }

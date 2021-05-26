@@ -7,6 +7,7 @@ package main.java.program.view;/*
 
 
 import main.java.program.controller.Controller;
+import main.java.program.controller.MailController;
 import main.java.program.entities.Cliente;
 
 import javax.imageio.ImageIO;
@@ -36,6 +37,7 @@ public class Tela extends JFrame {
     private Controller controller;
     private JFileChooser fileChooser;
     private JButton buttonChooser;
+    private MailController mailController;
 
 
     public Tela() throws IOException {
@@ -48,10 +50,15 @@ public class Tela extends JFrame {
 
         if (!telaInicial.getSair()) {
             controller = new Controller(new Cliente(telaInicial.getCampoNomeCliente().getText(), telaInicial.getRegiao()), this);
+            mailController = new MailController(this);
             initComponents();
             setVisible(true);
             controller.conectar(telaInicial.getCampoIP().getText(), Integer.parseInt(telaInicial.getCampoPorta().getText()));
-            controller.escutarFile();
+
+            final Thread threadCliente = new Thread(() -> {
+                controller.escutarFile();
+            });
+            threadCliente.start();
             controller.escutar();
         }
 
@@ -72,16 +79,12 @@ public class Tela extends JFrame {
         buttonChooser = new JButton();
         buttonChooser.setMargin(new Insets(0, 0, 0, 0));
         ImageIcon icon =new ImageIcon(img);
-
         buttonChooser.setIcon(new ImageIcon(getScaledImage(icon.getImage(), 35, 35)));
-
         buttonChooser.setOpaque(false);
         buttonChooser.setContentAreaFilled(false);
         buttonChooser.setBorderPainted(false);
         buttonChooser.setBorder(null);
-
         fileChooser = new JFileChooser();
-
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -224,7 +227,7 @@ public class Tela extends JFrame {
     }
 
     private void botaoEmailActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        mailController.openEmailDialog();
     }
 
     private void formWindowActivated(WindowEvent evt) {
